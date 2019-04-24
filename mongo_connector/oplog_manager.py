@@ -903,7 +903,7 @@ class OplogThread(threading.Thread):
 
                 database, coll = original_namespace.split('.', 1)
                 obj_id = bson.objectid.ObjectId
-                bson_obj_id_list = [obj_id(doc['_id']) for doc in doc_list]
+                bson_obj_id_list = list(map(lambda doc: obj_id(doc['_id']) if bson.objectid.ObjectId.is_valid(doc['_id']) else doc['_id'], doc_list))
 
                 # Use connection to whole cluster if in sharded environment.
                 client = self.mongos_client or self.primary_client
@@ -917,7 +917,7 @@ class OplogThread(threading.Thread):
                 # Docs in mongo
                 doc_hash = {}  # Hash by _id
                 for doc in doc_list:
-                    doc_hash[bson.objectid.ObjectId(doc['_id'])] = doc
+                    doc_hash[bson.objectid.ObjectId(doc['_id']) if bson.objectid.ObjectId.is_valid(doc['_id']) else doc['_id']] = doc
 
                 to_index = []
 

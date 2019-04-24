@@ -7,3 +7,6 @@
 # IDE settings folders
 .idea/
 .vscode/
+.eggs/
+.project
+.pydevproject
